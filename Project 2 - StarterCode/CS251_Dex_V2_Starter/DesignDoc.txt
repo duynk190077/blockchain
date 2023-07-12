@@ -1,46 +1,43 @@
-// =================== CS251 DEX Project =================== //
-//                      Design Document                      //
-//                   Ari Glenn & Mav Levin                   //
-// ========================================================= //
-
-
-1. Explain why adding and removing liquidity to your exchange does not change the exchange rate.
-Adding liquidity to the exchange does not change the exchange rate due to the fact that when a provider sends a certain amount of eth
-to be added to the liquidity, the contract ensures that the provider has the equivalent amount of tokens (according to the current exchange rate).
-The contract then makes the user send the equivalent amount of eth in tokens based on the exchange rate, ensuring that the exchange rate is not adjusted
-(which would occur should the user add an amount of eth and tokens that are not the same according to the rate, thereby changing it). Similarly,
-when removing liquidity, the amount of eth desired to be removed is only removed from the pool if the user has the equivalent amount of tokens,
-according to the current exchange rate. This prevents the exchange rate from being modified, as removing an inequivalent amount of eth and tokens,
-not based on the current exchange rate from the pool would change the exchange rate.
-
-
-2. Explain your scheme for rewarding liquidity providers and justify the design decisions you made. How does it satisfy the liquidity rewards requirements outlined in Section 7?
-To satisfy the liquidity rewards requirements outlined in Section 7 and reward providers, we used the mapping lps to store the addresses of providers
-and the respective percentage of liquidity they owned. When a new provider joins, the percentage of liquidity owned by every provider is respectively
-adjusted dependent upon the amount of new liquidity provided. To reward providers, whenever a swap is made the user is charged a small fee (3%)
-that is taken out from the amount of tokens or eth that the user will receive after the swap. The fees are added back into the total liquidity,
-effectively reinvested until a provider decides to withdraw their liquidity. Each provider's liquidity is increased by the fee amount dependent
-upon their percentage of the pool owned. This ensures that large providers will get a greater percentage of the fees than smaller providers.
-
-
-3. Describe at least one method you used to minimize your exchange contract's gas usage. Why was this method effective?
-One method we used to reduce gas fees was condensing extra loops in the contract that congested the code and removing repetitive blocks code.
-For example, in our removeAllLiquidity function we replaced the code we originally had written with a few checks to calculate the maximum
-amount of liquidity to remove and then made a call to our removeLiquidity function. This method helped to reduce the overall size of the contract
-(using less lines of code), thereby reducing the amount of code that needs to be stored on blockchain and thus reducing the exchange contract's
-gas usage.
 
 
 
-4. Optional Feedback:
-4a. How much time did you spend on the assignment?
-~20 hours
+1. Giải thích tại sao việc thêm và bớt thanh khoản vào trao đổi của bạn không làm thay đổi tỷ giá hối đoái.
+Việc thêm thanh khoản vào sàn giao dịch không làm thay đổi tỷ giá hối đoái do thực tế là khi nhà cung cấp gửi một lượng eth nhất định
+để được thêm vào tính thanh khoản, hợp đồng đảm bảo rằng nhà cung cấp có số lượng mã thông báo tương đương (theo tỷ giá hối đoái hiện tại).
+Sau đó, hợp đồng yêu cầu người dùng gửi số lượng eth tương đương bằng mã thông báo dựa trên tỷ giá hối đoái, đảm bảo rằng tỷ giá hối đoái không bị điều chỉnh
+(điều này sẽ xảy ra nếu người dùng thêm một lượng eth và mã thông báo không giống nhau theo tỷ lệ, do đó thay đổi nó). Tương tự,
+khi xóa tính thanh khoản, lượng eth mong muốn bị xóa chỉ bị xóa khỏi nhóm nếu người dùng có số lượng mã thông báo tương đương,
+theo tỷ giá hối đoái hiện hành. Điều này ngăn tỷ giá hối đoái bị sửa đổi, như loại bỏ một lượng eth và token không tương đương,
+không dựa trên tỷ giá hối đoái hiện tại từ nhóm sẽ thay đổi tỷ giá hối đoái.
 
-4b. What is one thing that would have been useful to know before starting the assignment?
-Nothing in particular
 
-4c. If you could change one with about this assignment, what would you change?
-Provide extra steps / additional documentation on how to deploy the contract in the real world
+2. Giải thích kế hoạch thưởng cho các nhà cung cấp thanh khoản của bạn và biện minh cho các quyết định thiết kế mà bạn đã đưa ra. Nó đáp ứng các yêu cầu về phần thưởng thanh khoản được nêu trong Phần 7 như thế nào?
+Để đáp ứng các yêu cầu về phần thưởng thanh khoản được nêu trong Phần 7 và phần thưởng cho các nhà cung cấp, chúng tôi đã sử dụng lps ánh xạ để lưu trữ địa chỉ của các nhà cung cấp
+và tỷ lệ thanh khoản tương ứng mà họ sở hữu. Khi một nhà cung cấp mới tham gia, tỷ lệ thanh khoản thuộc sở hữu của mỗi nhà cung cấp tương ứng là
+được điều chỉnh phụ thuộc vào lượng thanh khoản mới được cung cấp. Để thưởng cho các nhà cung cấp, bất cứ khi nào một giao dịch hoán đổi được thực hiện, người dùng sẽ bị tính một khoản phí nhỏ (3%)
+được lấy ra từ số lượng mã thông báo hoặc eth mà người dùng sẽ nhận được sau khi hoán đổi. Các khoản phí được cộng trở lại vào tổng thanh khoản,
+được tái đầu tư một cách hiệu quả cho đến khi một nhà cung cấp quyết định rút thanh khoản của họ. Tính thanh khoản của mỗi nhà cung cấp được tăng lên theo số tiền phí phụ thuộc vào
+theo tỷ lệ phần trăm sở hữu nhóm của họ. Điều này đảm bảo rằng các nhà cung cấp lớn sẽ nhận được phần trăm phí cao hơn so với các nhà cung cấp nhỏ hơn.
 
-4d. Please feel free to include any other feedback you may have below.
-Although this assignment took a lot of time I really enjoyed it and learned a lot
+
+3. Mô tả ít nhất một phương pháp bạn đã sử dụng để giảm thiểu việc sử dụng gas trong hợp đồng trao đổi của mình. Tại sao phương pháp này hiệu quả?
+Một phương pháp mà chúng tôi đã sử dụng để giảm phí gas là rút gọn các vòng lặp bổ sung trong hợp đồng làm tắc nghẽn mã và loại bỏ mã khối lặp đi lặp lại.
+Ví dụ: trong hàm removeAllLiquidity, chúng tôi đã thay thế mã mà chúng tôi đã viết ban đầu bằng một vài kiểm tra để tính toán giá trị tối đa
+lượng thanh khoản cần xóa và sau đó gọi hàm removeLiquidity của chúng tôi. Phương pháp này đã giúp giảm quy mô tổng thể của hợp đồng
+(sử dụng ít dòng mã hơn), do đó giảm số lượng mã cần được lưu trữ trên chuỗi khối và do đó giảm hợp đồng trao đổi
+sử dụng gas.
+
+
+
+4. Phản hồi tùy chọn:
+4a. Bạn đã dành bao nhiêu thời gian cho bài tập?
+~20 giờ
+
+4b. Một điều hữu ích cần biết trước khi bắt đầu nhiệm vụ là gì?
+Không có gì đặc biệt
+
+4c. Nếu bạn có thể thay đổi một câu về bài tập này, bạn sẽ thay đổi điều gì?
+Cung cấp các bước bổ sung / tài liệu bổ sung về cách triển khai hợp đồng trong thế giới thực
+
+4d. Vui lòng bao gồm bất kỳ phản hồi nào khác mà bạn có thể có bên dưới.
+Mặc dù nhiệm vụ này mất rất nhiều thời gian nhưng tôi thực sự thích nó và học được rất nhiều
